@@ -9,9 +9,10 @@ from openai import OpenAI
 import datetime
 import yaml
 from github import Github  # pip install PyGithub
+from github.GithubException import GithubException
 
 st.set_page_config(page_title="Resume Builder AI", layout="wide")
-
+filename = f"{GITHUB_PATH}resume_{timestamp}.json"
 # — Cloud detection & GitHub setup
 def is_cloud(): return "streamlit" in socket.gethostname().lower()
 
@@ -107,12 +108,21 @@ if st.button("🧩 Generate from AI"):
                 "prompt": prompt,
                 "data": ai_json
             })
-            # Save to GitHub
-            filename = f"{GITHUB_PATH}resume_{st.session_state.history[-1]['timestamp']}.json"
-            repo.create_file(path=filename, message=f"Add resume {filename}", content=json.dumps(ai_json, indent=2))
-        except Exception as e:
-            st.error(f"❌ Failed to generate or parse JSON:\n{e}")
-            st.stop()
+            try:
+                repo.get_contents(filename)  # 🔍 Will raise if file doesn't exist
+                st.warning(f"⚠️ File already exists: {filename}. Skipping upload.")
+            except GithubException as e:
+                if e.status == 404:
+                    # ✅ Safe to create
+                    repo.create_file(
+                        path=filename,
+                        message=f"Add resume {filename}",
+                        content=json.dumps(ai_json, indent=2)
+                    )
+                    st.success(f"✅ Uploaded to GitHub: {filename}")
+                else:
+                    st.error(f"❌ GitHub error: {e}")
+                    st.stop()
         st.success("✅ AI JSON generated")
         st.session_state.resume_data = ai_json
         st.session_state.history.append({
