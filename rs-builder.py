@@ -80,7 +80,7 @@ for idx, entry in enumerate(st.session_state.history):
 # — Main prompt editor
 col_logo, col_title = st.columns([2, 8])
 with col_logo:
-    st.image("logo.png", use_column_width=True)  # adjust path if needed
+    st.image("logo.png", use_container_width=True)  # ✅ updated
 with col_title:
     st.markdown("<h1 style='margin-top: 10px;'>BUBU Resume Generator</h1>", unsafe_allow_html=True)
 prompt = st.text_area("Enter your prompt:", st.session_state.get("prompt", DEFAULT_USER_PROMPT), height=150)
