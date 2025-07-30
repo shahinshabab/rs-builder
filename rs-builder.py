@@ -78,7 +78,11 @@ for idx, entry in enumerate(st.session_state.history):
         st.session_state.resume_data = entry["data"]
 
 # — Main prompt editor
-st.header("🧠 AI‑Assisted Resume Generator")
+col_logo, col_title = st.columns([2, 8])
+with col_logo:
+    st.image("logo.png", use_column_width=True)  # adjust path if needed
+with col_title:
+    st.markdown("<h1 style='margin-top: 10px;'>BUBU Resume Generator</h1>", unsafe_allow_html=True)
 prompt = st.text_area("Enter your prompt:", st.session_state.get("prompt", DEFAULT_USER_PROMPT), height=150)
 
 if st.button("🧩 Generate from AI"):
