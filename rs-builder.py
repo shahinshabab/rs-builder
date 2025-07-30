@@ -165,7 +165,8 @@ for idx, edu in enumerate(edu_secret):
         "course": course,
         "institute": institute,
         "from_date": from_date,
-        "to_date": to_date
+        "to_date": to_date,
+        "location": location
     })
 # Work experience
 st.subheader("Work Experience")
@@ -196,6 +197,19 @@ for i in range(exp_count):
         "position": position, "workplace": workplace,
         "location": location, "description": descriptions,
         "achievements": achievements
+    })
+st.subheader("References")
+ref_count = st.number_input("Number of references", min_value=0, max_value=5, value=0, step=1)
+references = []
+for i in range(ref_count):
+    st.markdown(f"### Reference {i+1}")
+    ref_name = st.text_input(f"Name {i+1}", key=f"ref_name_{i}")
+    ref_pos = st.text_input(f"Position {i+1}", key=f"ref_pos_{i}")
+    ref_contact = st.text_input(f"Contact {i+1}", key=f"ref_contact_{i}")
+    references.append({
+        "name": ref_name,
+        "position": ref_pos,
+        "contact": ref_contact
     })
 
 def build_html(name, contact, summary, skills, education, experiences, references):
