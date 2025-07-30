@@ -69,7 +69,7 @@ if "history" not in st.session_state:
     st.session_state.history = []
 
 if st.sidebar.button("➕ New Resume"):
-    st.session_state.prompt = EXAMPLE_PROMPT
+    st.session_state.prompt = DEFAULT_USER_PROMPT
     st.session_state.resume_data = None
 
 for idx, entry in enumerate(st.session_state.history):
@@ -88,7 +88,8 @@ prompt = st.text_area("Enter your prompt:", st.session_state.get("prompt", DEFAU
 if st.button("🧩 Generate from AI"):
     with st.spinner("Calling OpenAI…"):
         try:
-            response = client.chat.completions.create(
+            openai.api_key = OPENAI_API_KEY
+            response = openai.ChatCompletion.create(
                 model="gpt-4",
                 messages=[
                     {"role": "system", "content": SYSTEM_PROMPT},
@@ -275,7 +276,7 @@ def build_html(name, contact, summary, skills, education, experiences, reference
         html += f"""
         <div class="section">
             <div class="bold">{edu.get('course', '')}</div>
-            <div><em>{edu.get('institute', '')}</em></div>
+            <div><em>{edu.get('institute', '')}, {edu.get('location', '')}</em></div>
             <div>{edu.get('from_date', '')} – {edu.get('to_date', '')}</div>
         </div>
         """
