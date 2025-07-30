@@ -160,7 +160,8 @@ for idx, edu in enumerate(edu_secret):
     institute = st.text_input(f"Institute {idx+1}", edu.get("institute", ""), key=f"institute_{idx}")
     from_date = st.text_input(f"From Year {idx+1}", edu.get("from_date", ""), key=f"edufrom_{idx}")
     to_date = st.text_input(f"To Year {idx+1}", edu.get("to_date", ""), key=f"eduto_{idx}")
-    
+    location = st.text_input(f"Location {idx+1}", edu.get("location", ""), key=f"edu_location_{idx}")  # 🔧 Fix
+
     education.append({
         "course": course,
         "institute": institute,
@@ -168,6 +169,7 @@ for idx, edu in enumerate(edu_secret):
         "to_date": to_date,
         "location": location
     })
+
 # Work experience
 st.subheader("Work Experience")
 existing = resume_data.get("work_experience", [])
