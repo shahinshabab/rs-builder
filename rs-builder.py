@@ -99,15 +99,17 @@ if st.button("🧩 Generate from AI"):
             )
             reply = response.choices[0].message.content
             ai_json = json.loads(reply)
-            st.success("✅ Resume JSON generated successfully!")
+
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H%M")
             st.session_state.resume_data = ai_json
             st.session_state.history.append({
-                "timestamp": datetime.datetime.now().strftime("%Y-%m-%d_%H%M"),
+                "timestamp": timestamp,
                 "prompt": prompt,
                 "data": ai_json
             })
 
-            filename = f"{GITHUB_PATH}resume_{st.session_state.history[-1]['timestamp']}.json"
+            filename = f"{GITHUB_PATH}resume_{timestamp}.json"
+
             try:
                 repo.get_contents(filename)
                 st.warning(f"⚠️ File already exists: {filename}. Skipping upload.")
@@ -122,18 +124,10 @@ if st.button("🧩 Generate from AI"):
                 else:
                     st.error(f"❌ GitHub error: {e}")
                     st.stop()
+
+            st.success("✅ Resume JSON generated successfully!")
         except Exception as e:
-            st.error(f"❌ OpenAI error: {e}")
-        st.success("✅ AI JSON generated")
-        st.session_state.resume_data = ai_json
-        st.session_state.history.append({
-            "timestamp": datetime.datetime.now().strftime("%Y-%m-%d_%H%M"),
-            "prompt": prompt,
-            "data": ai_json
-        })
-        # optionally save to GitHub
-        filename = f"{GITHUB_PATH}resume_{st.session_state.history[-1]['timestamp']}.json"
-        repo.create_file(path=filename, message=f"Add resume {filename}", content=json.dumps(ai_json, indent=2))
+            st.error(f"❌ OpenAI or JSON parsing error: {e}")
 
 # — Load defaults or data
 resume_data = st.session_state.get("resume_data", {}) or {}
