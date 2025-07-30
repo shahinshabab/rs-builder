@@ -24,13 +24,44 @@ gh = Github(GITHUB_TOKEN)
 repo = gh.get_repo(GITHUB_REPO)
 
 # — Prompt template example
-EXAMPLE_PROMPT = '''
-Generate JSON with keys: profile_summary (string), key_skills (list of strings),
-work_experience (list of records with from_date, to_date, position, workplace, location,
-description (list), achievements (list)). Use this example format.
+# Pre-filled user prompt
+DEFAULT_USER_PROMPT = (
+    "Please generate a resume profile for the role of warehouse assistant in Melbourne. "
+    "Include 9 key skills based on the experience: "
+    "1. Worked as a warehouse assistant in Melbourne recently."
+)
 
-{ "profile_summary": "…", "key_skills": ["…"], "work_experience": [ { "from_date": "…", ... } ] }
-'''
+# Detailed system prompt (controls structure and style)
+SYSTEM_PROMPT = """
+You are a resume content generator. Your task is to create structured JSON with the following fields:
+- "profile_summary": A simple, impressive, 3–4 line paragraph.
+- "key_skills": A list of 6–9 relevant skills, covering both soft and core technical skills.
+- "work_experience": A list of experiences, each containing:
+    - from_date
+    - to_date
+    - position
+    - workplace
+    - location
+    - description: A list of 6 short bullet points describing responsibilities
+    - achievements: A list with one impactful achievement
+
+Respond strictly in JSON format like:
+{
+  "profile_summary": "...",
+  "key_skills": ["...", "..."],
+  "work_experience": [
+    {
+      "from_date": "...",
+      "to_date": "...",
+      "position": "...",
+      "workplace": "...",
+      "location": "...",
+      "description": ["...", "..."],
+      "achievements": ["..."]
+    }
+  ]
+}
+"""
 
 # Sidebar: past queries
 st.sidebar.title("🗂 Past Prompts / Resumes")
@@ -48,26 +79,34 @@ for idx, entry in enumerate(st.session_state.history):
 
 # — Main prompt editor
 st.header("🧠 AI‑Assisted Resume Generator")
-prompt = st.text_area("Enter your prompt (edit as needed):", st.session_state.get("prompt", EXAMPLE_PROMPT), height=200)
+prompt = st.text_area("Enter your prompt:", st.session_state.get("prompt", DEFAULT_USER_PROMPT), height=150)
 
 if st.button("🧩 Generate from AI"):
     with st.spinner("Calling OpenAI…"):
-        from openai import OpenAI
-        client = OpenAI(api_key=OPENAI_API_KEY)
-        response = client.chat.completions.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": "You are a resume JSON generator."},
-                {"role": "user", "content": prompt},
-            ],
-            temperature=0.2
-        )
-        # Get the text content
-        reply = response.choices[0].message.content
         try:
+            response = client.chat.completions.create(
+                model="gpt-4",
+                messages=[
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": prompt},
+                ],
+                temperature=0.3
+            )
+            reply = response.choices[0].message.content
             ai_json = json.loads(reply)
+            st.success("✅ Resume JSON generated successfully!")
+            # Save to session and history
+            st.session_state.resume_data = ai_json
+            st.session_state.history.append({
+                "timestamp": datetime.datetime.now().strftime("%Y-%m-%d_%H%M"),
+                "prompt": prompt,
+                "data": ai_json
+            })
+            # Save to GitHub
+            filename = f"{GITHUB_PATH}resume_{st.session_state.history[-1]['timestamp']}.json"
+            repo.create_file(path=filename, message=f"Add resume {filename}", content=json.dumps(ai_json, indent=2))
         except Exception as e:
-            st.error("❌ Failed to parse JSON: " + str(e))
+            st.error(f"❌ Failed to generate or parse JSON:\n{e}")
             st.stop()
         st.success("✅ AI JSON generated")
         st.session_state.resume_data = ai_json
