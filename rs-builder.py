@@ -5,7 +5,7 @@ import json
 import requests
 import os
 import socket
-import openai
+from openai import OpenAI
 import datetime
 import yaml
 from github import Github  # pip install PyGithub
@@ -88,8 +88,8 @@ prompt = st.text_area("Enter your prompt:", st.session_state.get("prompt", DEFAU
 if st.button("🧩 Generate from AI"):
     with st.spinner("Calling OpenAI…"):
         try:
-            openai.api_key = OPENAI_API_KEY
-            response = openai.ChatCompletion.create(
+            client = OpenAI(api_key=OPENAI_API_KEY)
+            response = client.chat.completions.create(
                 model="gpt-4",
                 messages=[
                     {"role": "system", "content": SYSTEM_PROMPT},
