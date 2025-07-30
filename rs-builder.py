@@ -16,8 +16,6 @@ st.set_page_config(page_title="Resume Builder AI", layout="wide")
 def is_cloud(): return "streamlit" in socket.gethostname().lower()
 
 OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
-openai.api_key = OPENAI_API_KEY
-
 GITHUB_TOKEN = st.secrets["GITHUB_TOKEN"]
 GITHUB_REPO = st.secrets["GITHUB_REPO"]  # e.g. "username/repo"
 GITHUB_PATH = st.secrets.get("GITHUB_PATH", "resumes/")
@@ -54,16 +52,20 @@ prompt = st.text_area("Enter your prompt (edit as needed):", st.session_state.ge
 
 if st.button("🧩 Generate from AI"):
     with st.spinner("Calling OpenAI…"):
-        response = openai.ChatCompletion.create(
-            model="gpt‑4",
+        from openai import OpenAI
+        client = OpenAI(api_key=OPENAI_API_KEY)
+        response = client.chat.completions.create(
+            model="gpt-4",
             messages=[
-                {"role":"system", "content":"You are a resume JSON generator."},
-                {"role":"user", "content": prompt},
+                {"role": "system", "content": "You are a resume JSON generator."},
+                {"role": "user", "content": prompt},
             ],
             temperature=0.2
         )
+        # Get the text content
+        reply = response.choices[0].message.content
         try:
-            ai_json = json.loads(response.choices[0].message.content)
+            ai_json = json.loads(reply)
         except Exception as e:
             st.error("❌ Failed to parse JSON: " + str(e))
             st.stop()
