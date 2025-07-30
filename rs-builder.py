@@ -12,7 +12,6 @@ from github import Github  # pip install PyGithub
 from github.GithubException import GithubException
 
 st.set_page_config(page_title="Resume Builder AI", layout="wide")
-filename = f"{GITHUB_PATH}resume_{timestamp}.json"
 # — Cloud detection & GitHub setup
 def is_cloud(): return "streamlit" in socket.gethostname().lower()
 
