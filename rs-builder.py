@@ -79,6 +79,10 @@ def load_latest_resumes():
         st.sidebar.error(f"Failed to load past resumes: {e}")
         return []
         
+if st.sidebar.button("➕ New Resume"):
+    st.session_state.prompt = DEFAULT_USER_PROMPT
+    st.session_state.resume_data = None
+    
 st.sidebar.title("🗂 Past Prompts / Resumes")
 if "history" not in st.session_state:
     st.session_state.history = []
@@ -96,10 +100,6 @@ for f in latest_files:
             st.success(f"✅ Loaded resume from: {f.name}")
         except Exception as e:
             st.sidebar.error(f"❌ Error parsing {f.name}: {e}")
-
-if st.sidebar.button("➕ New Resume"):
-    st.session_state.prompt = DEFAULT_USER_PROMPT
-    st.session_state.resume_data = None
 
 # — Main prompt editor
 col_logo, col_title = st.columns([2, 8])
