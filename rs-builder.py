@@ -261,48 +261,51 @@ def build_html(name, contact, summary, skills, education, experiences, reference
                 font-size: 10pt;
                 line-height: 1.3;
                 color: #000;
+                margin: 0;
+                padding: 0;
             }}
             h1 {{
-                font-size: 16pt;
-                margin-bottom: 4px;
+                font-size: 20pt;  /* increased font size */
+                margin-bottom: 2px; /* reduced spacing below name */
             }}
             .contact {{
                 font-size: 9pt;
-                margin-bottom: 15px;
+                margin-bottom: 8px; /* reduced gap after contact */
+                line-height: 1.2;   /* tighter lines between address/phone/email */
             }}
             .contact div {{
-                margin-bottom: 2px;
+                margin-bottom: 1px;  /* smaller gap between lines */
             }}
             .subheading {{
                 font-size: 11pt;
                 font-weight: bold;
                 color: #003366;
-                margin-top: 16px;
-                margin-bottom: 5px;
+                margin-top: 10px;  /* reduced gap between sections */
+                margin-bottom: 3px;  /* reduced gap before section content */
             }}
             .bold {{
                 font-weight: bold;
             }}
             .section {{
-                margin-bottom: 8px; /* tighter spacing */
+                margin-bottom: 6px; /* tighter spacing between education and jobs */
             }}
             ul {{
-                margin: 3px 0 0 15px;  /* reduced top margin between bullet items */
+                margin: 2px 0 0 15px;
                 padding-left: 0;
             }}
             li {{
-                margin-bottom: 2px;  /* tighter space between skill lines */
+                margin-bottom: 2px;
             }}
             em {{
                 font-style: italic;
                 color: #000;
                 display: block;
-                margin-top: 1px;  /* less space between course and college name */
-                margin-bottom: 1px;  /* less space between college name and years */
+                margin-top: 0;
+                margin-bottom: 0;
             }}
             .experience-meta {{
                 margin-top: 1px;
-                margin-bottom: 1px;  /* tighter block between position, location, and year */
+                margin-bottom: 1px;
             }}
         </style>
     </head>
