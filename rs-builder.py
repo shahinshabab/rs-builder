@@ -131,6 +131,10 @@ if st.button("🧩 Generate from AI"):
 
 # — Load defaults or data
 resume_data = st.session_state.get("resume_data", {}) or {}
+# Force update exp_count to match the number of experiences loaded
+if "exp_count" not in st.session_state or st.session_state.get("resume_data") != resume_data:
+    st.session_state.exp_count = max(1, len(resume_data.get("work_experience", [])))
+
 if not resume_data:
     st.info("🤖 Generate resume using the AI button above.")
 
@@ -173,7 +177,7 @@ for idx, edu in enumerate(edu_secret):
 # Work experience
 st.subheader("Work Experience")
 existing = resume_data.get("work_experience", [])
-exp_count = st.session_state.get("exp_count", len(existing) or 1)
+exp_count = st.session_state.exp_count
 col1, col2 = st.columns(2)
 if col1.button("➕ Add Experience"):
     exp_count += 1
