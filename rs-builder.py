@@ -102,6 +102,7 @@ if st.button("🧩 Generate from AI"):
 
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H%M")
             st.session_state.resume_data = ai_json
+            st.session_state.exp_count = len(ai_json.get("work_experience", []))  # <- Force update!
             st.session_state.history.append({
                 "timestamp": timestamp,
                 "prompt": prompt,
@@ -132,7 +133,7 @@ if st.button("🧩 Generate from AI"):
 # — Load defaults or data
 resume_data = st.session_state.get("resume_data", {}) or {}
 # Force update exp_count to match the number of experiences loaded
-if "exp_count" not in st.session_state or st.session_state.get("resume_data") != resume_data:
+if "exp_count" not in st.session_state:
     st.session_state.exp_count = max(1, len(resume_data.get("work_experience", [])))
 
 if not resume_data:
