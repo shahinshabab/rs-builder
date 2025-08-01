@@ -69,7 +69,10 @@ def load_latest_resumes():
         contents = repo.get_contents(GITHUB_PATH)
         resume_files = [f for f in contents if f.name.startswith("resume_") and f.name.endswith(".json")]
         # Sort by timestamp parsed from filename
-        resume_files.sort(key=lambda f: datetime.strptime(f.name.replace("resume_", "").replace(".json", ""), "%Y-%m-%d_%H%M"), reverse=True)
+        resume_files.sort(
+            key=lambda f: datetime.datetime.strptime(f.name.replace("resume_", "").replace(".json", ""), "%Y-%m-%d_%H%M"),
+            reverse=True
+        )
         latest_files = resume_files[:10]
         return latest_files
     except Exception as e:
