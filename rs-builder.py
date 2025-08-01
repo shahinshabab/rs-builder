@@ -63,19 +63,40 @@ Respond strictly in JSON format like:
 }
 """
 
-# Sidebar: past queries
+@st.cache_data(ttl=60)
+def load_latest_resumes():
+    try:
+        contents = repo.get_contents(GITHUB_PATH)
+        resume_files = [f for f in contents if f.name.startswith("resume_") and f.name.endswith(".json")]
+        # Sort by timestamp parsed from filename
+        resume_files.sort(key=lambda f: datetime.strptime(f.name.replace("resume_", "").replace(".json", ""), "%Y-%m-%d_%H%M"), reverse=True)
+        latest_files = resume_files[:10]
+        return latest_files
+    except Exception as e:
+        st.sidebar.error(f"Failed to load past resumes: {e}")
+        return []
+        
 st.sidebar.title("🗂 Past Prompts / Resumes")
 if "history" not in st.session_state:
     st.session_state.history = []
 
+latest_files = load_latest_resumes()
+for f in latest_files:
+    label = f.name.replace("resume_", "").replace(".json", "")
+    if st.sidebar.button(f"Load {label}"):
+        file_content = repo.get_contents(f.path)
+        try:
+            data = json.loads(file_content.decoded_content.decode())
+            st.session_state.prompt = DEFAULT_USER_PROMPT  # optional: keep prompt as is
+            st.session_state.resume_data = data
+            st.session_state.exp_count = len(data.get("work_experience", []))
+            st.success(f"✅ Loaded resume from: {f.name}")
+        except Exception as e:
+            st.sidebar.error(f"❌ Error parsing {f.name}: {e}")
+
 if st.sidebar.button("➕ New Resume"):
     st.session_state.prompt = DEFAULT_USER_PROMPT
     st.session_state.resume_data = None
-
-for idx, entry in enumerate(st.session_state.history):
-    if st.sidebar.button(f"Load {entry['timestamp']}"):
-        st.session_state.prompt = entry["prompt"]
-        st.session_state.resume_data = entry["data"]
 
 # — Main prompt editor
 col_logo, col_title = st.columns([2, 8])
