@@ -34,7 +34,7 @@ DEFAULT_USER_PROMPT = (
 # Detailed system prompt (controls structure and style)
 SYSTEM_PROMPT = """
 You are a resume content generator. Your task is to create structured JSON with the following fields:
-- "profile_summary": A simple, impressive, 3–4 line paragraph.
+- "profile_summary": A simple, impressive, 3–4 line paragraph. for eg: Friendly and motivated customer service professional with excellent communication skills and a proven ability to handle customer inquiries efficiently and professionally. Experienced in front desk and hospitality roles, with strong skills in problem-solving, multitasking, and maintaining a positive and welcoming environment. Quick to learn new systems and dedicated to providing exceptional service that exceeds customer expectations.
 - "key_skills": A list of 6–9 relevant skills, covering both soft and core technical skills.
 - "work_experience": A list of experiences, each containing:
     - from_date
@@ -334,13 +334,27 @@ def convert_html_to_pdf(source_html):
     return None if pisa_status.err else output.getvalue()
 
 if st.button("💡 Preview HTML"):
+    # Truncate key skills if more than 1 experience
+    adjusted_skills = skills[:7] if len(experiences) >= 2 else skills
+    # Truncate education to 1 section if more than 1 experience
+    adjusted_education = education[:1] if len(experiences) >= 2 else education
+    # Truncate each experience description to 5 points if more than 1 experience
+    adjusted_experiences = []
+    for exp in experiences:
+        trimmed_desc = exp.get("description", [])[:5] if len(experiences) >= 2 else exp.get("description", [])
+        trimmed_ach = exp.get("achievements", [])  # leave achievement unchanged
+        adjusted_experiences.append({
+            **exp,
+            "description": trimmed_desc,
+            "achievements": trimmed_ach,
+        })
     html = build_html(
         name=resume_data.get("name", ""),
         contact={"name": name, "number": number, "email": email, "address": address},
         summary=profile_summary,
-        skills=skills,
-        education=education,
-        experiences=experiences,
+        skills=adjusted_skills,
+        education=adjusted_education,
+        experiences=adjusted_experiences,
         references=resume_data.get("reference_details", [])
     )
     st.session_state.html_preview = html
