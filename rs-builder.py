@@ -230,18 +230,25 @@ for i in range(exp_count):
         "achievements": achievements
     })
 st.subheader("References")
-ref_count = st.number_input("Number of references", min_value=0, max_value=5, value=0, step=1)
+existing_refs = resume_data.get("reference_details", [])
+ref_count = st.number_input(
+    "Number of references",
+    min_value=0, max_value=5,
+    value=max(len(existing_refs), 0),  # prefill if any exist
+    step=1,
+    key="ref_count"  # ✅ keeps the value across reruns (e.g., when you click Preview)
+)
 references = []
 for i in range(ref_count):
+    prev = existing_refs[i] if i < len(existing_refs) else {}
     st.markdown(f"### Reference {i+1}")
-    ref_name = st.text_input(f"Name {i+1}", key=f"ref_name_{i}")
-    ref_pos = st.text_input(f"Position {i+1}", key=f"ref_pos_{i}")
-    ref_contact = st.text_input(f"Contact {i+1}", key=f"ref_contact_{i}")
-    references.append({
-        "name": ref_name,
-        "position": ref_pos,
-        "contact": ref_contact
-    })
+    ref_name = st.text_input(f"Name {i+1}", prev.get("name", ""), key=f"ref_name_{i}")
+    ref_pos = st.text_input(f"Position {i+1}", prev.get("position", ""), key=f"ref_pos_{i}")
+    ref_contact = st.text_input(f"Contact {i+1}", prev.get("contact", ""), key=f"ref_contact_{i}")
+    references.append({"name": ref_name, "position": ref_pos, "contact": ref_contact})
+
+# ✅ Keep only refs where at least one field is filled
+references = [r for r in references if any(v.strip() for v in r.values() if isinstance(v, str))]
 
 def build_html(name, contact, summary, skills, education, experiences, references):
     def bullet_list(items):
@@ -401,4 +408,5 @@ if "html_preview" in st.session_state:
             st.download_button("⬇️ Download Resume", data=pdf_bytes, file_name="resume.pdf", mime="application/pdf")
         else:
             st.error("❌ PDF generation failed")
+
 
