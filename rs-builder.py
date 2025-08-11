@@ -373,7 +373,7 @@ def convert_html_to_pdf(source_html):
 
 if st.button("💡 Preview HTML"):
     # Truncate key skills if more than 1 experience
-    adjusted_skills = skills[:6] if len(experiences) >= 2 else skills
+    adjusted_skills = skills[:7] if len(experiences) >= 2 else skills
     # Truncate education to 1 section if more than 1 experience
     adjusted_education = education[:1] if len(experiences) >= 2 else education
     # Truncate each experience description to 5 points if more than 1 experience
@@ -407,6 +407,7 @@ if "html_preview" in st.session_state:
             st.download_button("⬇️ Download Resume", data=pdf_bytes, file_name="resume.pdf", mime="application/pdf")
         else:
             st.error("❌ PDF generation failed")
+
 
 
 
