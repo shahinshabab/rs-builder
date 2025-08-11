@@ -387,7 +387,7 @@ if st.button("💡 Preview HTML"):
         skills=adjusted_skills,
         education=adjusted_education,
         experiences=adjusted_experiences,
-        references=resume_data.get("reference_details", [])
+        references=references  # ✅ use the collected references
     )
     st.session_state.html_preview = html
 
@@ -401,3 +401,4 @@ if "html_preview" in st.session_state:
             st.download_button("⬇️ Download Resume", data=pdf_bytes, file_name="resume.pdf", mime="application/pdf")
         else:
             st.error("❌ PDF generation failed")
+
