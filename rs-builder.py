@@ -272,11 +272,11 @@ def build_html(name, contact, summary, skills, education, experiences, reference
                 padding: 0;
             }}
             h1 {{
-                font-size: 19pt;  
+                font-size: 20pt;  
                 margin-bottom: 1px; /* reduced further */
             }}
             .contact {{
-                font-size: 9pt;
+                font-size: 10pt;
                 margin-bottom: 6px; /* reduced gap after contact */
                 line-height: 1.15;  /* tighter lines */
             }}
@@ -284,7 +284,7 @@ def build_html(name, contact, summary, skills, education, experiences, reference
                 margin-bottom: 0;  /* no gap between lines */
             }}
             .subheading {{
-                font-size: 11pt;
+                font-size: 12pt;
                 font-weight: bold;
                 color: #003366;
                 margin-top: 8px;  /* less gap between sections */
@@ -407,6 +407,7 @@ if "html_preview" in st.session_state:
             st.download_button("⬇️ Download Resume", data=pdf_bytes, file_name="resume.pdf", mime="application/pdf")
         else:
             st.error("❌ PDF generation failed")
+
 
 
 
