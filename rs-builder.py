@@ -266,53 +266,52 @@ def build_html(name, contact, summary, skills, education, experiences, reference
                 width: 180mm;
                 font-family: 'Arial', sans-serif;
                 font-size: 10pt;
-                line-height: 1.3;
+                line-height: 1.22; /* slightly tighter than 1.3 */
                 color: #000;
                 margin: 0;
                 padding: 0;
             }}
             h1 {{
-                font-size: 20pt;  /* increased font size */
-                margin-bottom: 2px; /* reduced spacing below name */
+                font-size: 19pt;  
+                margin-bottom: 1px; /* reduced further */
             }}
             .contact {{
                 font-size: 9pt;
-                margin-bottom: 8px; /* reduced gap after contact */
-                line-height: 1.2;   /* tighter lines between address/phone/email */
+                margin-bottom: 6px; /* reduced gap after contact */
+                line-height: 1.15;  /* tighter lines */
             }}
             .contact div {{
-                margin-bottom: 1px;  /* smaller gap between lines */
+                margin-bottom: 0;  /* no gap between lines */
             }}
             .subheading {{
                 font-size: 11pt;
                 font-weight: bold;
                 color: #003366;
-                margin-top: 10px;  /* reduced gap between sections */
-                margin-bottom: 3px;  /* reduced gap before section content */
+                margin-top: 8px;  /* less gap between sections */
+                margin-bottom: 2px;
             }}
             .bold {{
                 font-weight: bold;
             }}
             .section {{
-                margin-bottom: 6px; /* tighter spacing between education and jobs */
+                margin-bottom: 4px; /* tighter spacing between entries */
             }}
             ul {{
-                margin: 2px 0 0 15px;
+                margin: 1px 0 0 15px;
                 padding-left: 0;
             }}
             li {{
-                margin-bottom: 2px;
+                margin-bottom: 1px; /* less gap between bullets */
             }}
             em {{
                 font-style: italic;
                 color: #000;
                 display: block;
-                margin-top: 0;
-                margin-bottom: 0;
+                margin: 0;
             }}
             .experience-meta {{
-                margin-top: 1px;
-                margin-bottom: 1px;
+                margin-top: 0;
+                margin-bottom: 0;
             }}
         </style>
     </head>
@@ -408,6 +407,7 @@ if "html_preview" in st.session_state:
             st.download_button("⬇️ Download Resume", data=pdf_bytes, file_name="resume.pdf", mime="application/pdf")
         else:
             st.error("❌ PDF generation failed")
+
 
 
 
